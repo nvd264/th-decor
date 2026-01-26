@@ -1,7 +1,3 @@
-"use client"; // This is a client-side component
-
-// Import React hooks and Image component
-import { useEffect, useState } from "react";
 import Image from "next/image";
 
 // Define Article interface
@@ -16,18 +12,11 @@ export interface Article {
 // Define Strapi URL
 const STRAPI_URL = "http://localhost:1337";
 
-export default function Home() {
-  // Define articles state
-  const [articles, setArticles] = useState<Article[]>([]);
+export default async function Home() {
+  const response = await fetch(`${STRAPI_URL}/api/articles?populate=*`);
+  const articles = await response.json();
 
-  // Fetch articles
-  const getArticles = async () => {
-    const response = await fetch(`${STRAPI_URL}/api/articles?populate=*`);
-    const data = await response.json();
-    setArticles(data.data);
-  };
-
-  // Format date
+  // Format date of articles
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -37,11 +26,6 @@ export default function Home() {
     return new Date(date).toLocaleDateString("en-US", options);
   };
 
-  // Fetch articles on component mount
-  useEffect(() => {
-    getArticles();
-  }, []);
-
   return (
     <div className="p-6">
       <h1 className="text-4xl font-bold mb-8">
@@ -50,8 +34,8 @@ export default function Home() {
       <div>
         <h2 className="text-2xl font-semibold mb-6">Articles</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles?.length > 0 ? (
-            articles.map((article) => (
+          {articles.data.length > 0 ? (
+            articles.data.map((article) => (
               <article
                 key={article.id}
                 className="bg-white shadow-md rounded-lg overflow-hidden"
