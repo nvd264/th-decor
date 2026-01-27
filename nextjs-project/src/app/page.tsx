@@ -1,19 +1,9 @@
 import Image from "next/image";
 
-// Define Article interface
-export interface Article {
-  id: string;
-  title: string;
-  content: string;
-  cover: any;
-  publishedAt: Date;
-}
-
-// Define Strapi URL
-const STRAPI_URL = "http://localhost:1337";
-
 export default async function Home() {
-  const response = await fetch(`${STRAPI_URL}/api/articles?populate=*`);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/articles?populate=*`,
+  );
   const articles = await response.json();
 
   // Format date of articles
@@ -42,7 +32,7 @@ export default async function Home() {
               >
                 <Image
                   className="w-full h-48 object-cover"
-                  src={STRAPI_URL + article.cover.url}
+                  src={process.env.NEXT_PUBLIC_STRAPI_URL + article.cover.url}
                   alt={article.title}
                   width={180}
                   height={38}
